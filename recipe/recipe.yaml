@@ -36,6 +36,7 @@ tests:
   - script:
       - toybox --version
       - toybox --help
+      - toybox
   - package_contents:
       strict: true
       bin:
