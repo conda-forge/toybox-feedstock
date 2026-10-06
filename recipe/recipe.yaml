@@ -1,5 +1,5 @@
 context:
-  version: "0.8.14"
+  version: "0.8.15"
 
 package:
   name: toybox
@@ -7,19 +7,21 @@ package:
 
 source:
   url: https://github.com/landley/toybox/archive/${{ version }}.tar.gz
-  sha256: 082df8cfd76135ce3c4820c8cf4c0081d61491e0990aff2da48e21fc9bbb24d1
+  sha256: 52452b68a6cf50f9a9728b0f844b03c4dd1f70463675b202e6cf0475bda3934f
 
 build:
-  number: 1
+  number: 0
   skip: win
   script:
     content:
       - if: osx
         then:
+          # macOS has no posix_fadvise(), but upstream macos_miniconfig enables readahead
+          - sed -i '/^CONFIG_READAHEAD=/d' scripts/macos_miniconfig
           - make macos_defconfig toybox HOSTCC="${CC_FOR_BUILD}"
         else:
           - make defconfig toybox HOSTCC="${CC_FOR_BUILD}"
-      - install -D -m755 toybox "${PREFIX}/bin/toybox"
+      - install -D -m0755 -t "$PREFIX/bin/" toybox
 
 requirements:
   build:
