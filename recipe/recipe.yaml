@@ -16,10 +16,12 @@ build:
     content:
       - if: osx
         then:
+          # macOS has no posix_fadvise(), but upstream macos_miniconfig enables readahead
+          - sed -i '/^CONFIG_READAHEAD=/d' scripts/macos_miniconfig
           - make macos_defconfig toybox HOSTCC="${CC_FOR_BUILD}"
         else:
           - make defconfig toybox HOSTCC="${CC_FOR_BUILD}"
-      - install -D -m755 toybox "${PREFIX}/bin/toybox"
+      - install -D -m0755 -t "$PREFIX/bin/" toybox
 
 requirements:
   build:
